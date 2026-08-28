@@ -21,7 +21,7 @@ public class Autor {
     private UUID id;
 
     @Column(name= "nome", nullable = false)
-    private String name;
+    private String nome;
 
     @Column(name = "data_nascimento", nullable = false)
     private LocalDate dataNascimento;
@@ -29,6 +29,5 @@ public class Autor {
     @Column(name = "nacionalidade", nullable = false, length = 50)
     private String nacionalidade;
 
-    @OneToMany(mappedBy = "autor")
-    private List<Livro> livros;
+
 }
