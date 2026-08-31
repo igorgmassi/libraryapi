@@ -1,6 +1,7 @@
 package io.com.igorgmassi.libraryapi.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "livro", schema = "public")
+@Data
 public class Livro {
 
     @Id
