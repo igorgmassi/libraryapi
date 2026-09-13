@@ -29,5 +29,7 @@ public class Autor {
     @Column(name = "nacionalidade", nullable = false, length = 50)
     private String nacionalidade;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Livro> livros;
 
 }
