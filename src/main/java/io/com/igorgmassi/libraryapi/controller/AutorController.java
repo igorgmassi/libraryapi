@@ -36,8 +36,8 @@ public class AutorController {
     public ResponseEntity<AutorDTO> buscarAutorPorId(@PathVariable String id){
         try{
             UUID uuid = UUID.fromString(id);
-
             Optional<Autor> autorResponse = autorService.buscarPorId(uuid);
+
             if(autorResponse.isPresent()){
                 Autor autor = autorResponse.get();
                 AutorDTO dto = new AutorDTO(
@@ -46,7 +46,6 @@ public class AutorController {
                         autor.getDataNascimento(),
                         autor.getNacionalidade()
                 );
-
                 return ResponseEntity.ok(dto);
             }
 
@@ -55,6 +54,23 @@ public class AutorController {
         }catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().build();
         }
+    }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deletarAutor(@PathVariable String id){
+        try{
+            UUID uuid = UUID.fromString(id);
+            Optional<Autor> autorResponse = autorService.buscarPorId(uuid);
+
+            if(autorResponse.isEmpty()){
+                return ResponseEntity.notFound().build();
+            }
+
+            autorService.deletar(autorResponse.get());
+            return ResponseEntity.noContent().build();
+
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
