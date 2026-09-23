@@ -2,17 +2,21 @@ package io.com.igorgmassi.libraryapi.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.rmi.server.UID;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "autor" , schema = "public")
 @Data
+@EntityListeners(AuditingEntityListener.class)
 public class Autor {
 
     @Id
@@ -31,5 +35,16 @@ public class Autor {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Livro> livros;
+
+    @Column(name = "data_cadastro")
+    @CreationTimestamp
+    private LocalDateTime dataCadastro;
+
+    @Column(name = "data_atualizacao")
+    @LastModifiedDate
+    private LocalDateTime dataAtualizacao;
+
+    @Column(name = "id_usuario")
+    private UUID idUsuario;
 
 }
