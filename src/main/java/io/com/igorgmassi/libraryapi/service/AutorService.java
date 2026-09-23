@@ -5,6 +5,7 @@ import io.com.igorgmassi.libraryapi.repository.AutorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,4 +27,25 @@ public class AutorService {
     public void deletar(Autor autor){
         autorRepository.delete(autor);
     }
+
+    /*Now i just gonna make a sacrilege only for purpose to follow the class, but
+    * i know that it is not the most clean and efficient way to implement*/
+    public List<Autor> pesquisar(String nome, String nacionalidade){
+
+        if (nome != null && nacionalidade != null){
+            return autorRepository.findByNomeAndNacionalidade(nome, nacionalidade);
+
+        }
+
+        if(nome != null){
+            return autorRepository.findByNome(nome);
+        }
+
+        if(nacionalidade != null){
+            return autorRepository.findByNacionalidade(nacionalidade);
+        }
+        return autorRepository.findAll();
+
+        //That hurt me to see that
+    };
 }
