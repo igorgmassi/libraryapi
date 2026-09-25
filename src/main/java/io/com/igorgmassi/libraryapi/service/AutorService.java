@@ -47,5 +47,13 @@ public class AutorService {
         return autorRepository.findAll();
 
         //That hurt me to see that
-    };
+    }
+
+    public void atualizar (Autor autor){
+
+        if(autor.getId() == null){
+            throw new IllegalArgumentException("Autor precisa estar cadastrado na base de dados");
+        }
+        autorRepository.save(autor);
+    }
 }
