@@ -1,15 +1,17 @@
 package io.com.igorgmassi.libraryapi.controller;
 
 import io.com.igorgmassi.libraryapi.dto.AutorDTO;
+import io.com.igorgmassi.libraryapi.dto.ErroReposta;
+import io.com.igorgmassi.libraryapi.exeptions.RegistroDuplicadoException;
 import io.com.igorgmassi.libraryapi.model.Autor;
 import io.com.igorgmassi.libraryapi.service.AutorService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,16 +24,23 @@ public class AutorController {
     private AutorService autorService;
 
     @PostMapping
-    public ResponseEntity<Void> cadastrarAutor(@RequestBody AutorDTO dto) {
-        Autor autorEntity = dto.mapearParaAutor();
-        autorService.salvar(autorEntity);
-        URI location = ServletUriComponentsBuilder.
-                fromCurrentRequest().
-                path("/{id}").
-                buildAndExpand(autorEntity.getId()).
-                toUri();
+    public ResponseEntity<Object> cadastrarAutor(@RequestBody AutorDTO dto) {
+        try{
+            Autor autorEntity = dto.mapearParaAutor();
+            autorService.salvar(autorEntity);
+            URI location = ServletUriComponentsBuilder.
+                    fromCurrentRequest().
+                    path("/{id}").
+                    buildAndExpand(autorEntity.getId()).
+                    toUri();
 
-        return ResponseEntity.created(location).build();
+            return ResponseEntity.created(location).build();
+
+
+        }catch(RegistroDuplicadoException e){
+            ErroReposta erro = ErroReposta.repostaConflito(e.getMessage());
+            return ResponseEntity.status(erro.status()).body(erro);
+        }
     }
 
     @GetMapping("{id}")
@@ -97,7 +106,7 @@ public class AutorController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> atualizarAutor(
+    public ResponseEntity<Object> atualizarAutor(
             @PathVariable String id,
             @RequestBody AutorDTO dto){
 
@@ -119,7 +128,12 @@ public class AutorController {
             return ResponseEntity.noContent().build();
 
         }catch (IllegalArgumentException e){
+
             return ResponseEntity.badRequest().build();
+        }catch(RegistroDuplicadoException e){
+            ErroReposta erro = ErroReposta.repostaConflito(e.getMessage());
+
+            return ResponseEntity.status(erro.status()).body(erro);
         }
     }
 }
