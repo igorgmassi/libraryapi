@@ -14,7 +14,7 @@ public class AutorValidator {
     @Autowired
     private AutorRepository autorRepository;
 
-    public void validar(Autor autor){
+    public void validarAutor(Autor autor){
         if(existeAutorCadastrado(autor)){
             throw new RegistroDuplicadoException("Já existe um Autor cadastrado com este registro");
         }
