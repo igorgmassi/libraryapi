@@ -2,6 +2,7 @@ package io.com.igorgmassi.libraryapi.service;
 
 import io.com.igorgmassi.libraryapi.model.Autor;
 import io.com.igorgmassi.libraryapi.repository.AutorRepository;
+import io.com.igorgmassi.libraryapi.validator.AutorValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +16,11 @@ public class AutorService {
     @Autowired
     private AutorRepository autorRepository;
 
-    public Autor salvar( Autor autor){
+    @Autowired
+    private AutorValidator autorValidator;
 
+    public Autor salvar( Autor autor){
+        autorValidator.validarAutor(autor);
         return autorRepository.save(autor);
     }
 
@@ -54,6 +58,7 @@ public class AutorService {
         if(autor.getId() == null){
             throw new IllegalArgumentException("Autor precisa estar cadastrado na base de dados");
         }
+        autorValidator.validarAutor(autor);
         autorRepository.save(autor);
     }
 }
