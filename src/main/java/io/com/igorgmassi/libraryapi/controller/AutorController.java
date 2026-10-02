@@ -2,6 +2,7 @@ package io.com.igorgmassi.libraryapi.controller;
 
 import io.com.igorgmassi.libraryapi.dto.AutorDTO;
 import io.com.igorgmassi.libraryapi.dto.ErroReposta;
+import io.com.igorgmassi.libraryapi.exeptions.OperacaoNaoPermitidaException;
 import io.com.igorgmassi.libraryapi.exeptions.RegistroDuplicadoException;
 import io.com.igorgmassi.libraryapi.model.Autor;
 import io.com.igorgmassi.libraryapi.service.AutorService;
@@ -68,7 +69,7 @@ public class AutorController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deletarAutor(@PathVariable String id){
+    public ResponseEntity<Object> deletarAutor(@PathVariable String id){
         try{
             UUID uuid = UUID.fromString(id);
             Optional<Autor> autorResponse = autorService.buscarPorId(uuid);
@@ -81,7 +82,11 @@ public class AutorController {
             return ResponseEntity.noContent().build();
 
         }catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (OperacaoNaoPermitidaException e){
+
+            ErroReposta erro = ErroReposta.repostaConflito(e.getMessage());
+            return ResponseEntity.status(erro.status()).body(erro);
         }
     }
 
@@ -121,7 +126,7 @@ public class AutorController {
             Autor autor = autorResponse.get();
             autor.setNome(dto.nome());
             autor.setDataNascimento(dto.dataNascimento());
-            autor.setNacionalidade(dto.nacionalidade());
+            autor.setNacionalidade(dto  .nacionalidade());
 
             autorService.atualizar(autor);
 
@@ -131,8 +136,8 @@ public class AutorController {
 
             return ResponseEntity.badRequest().build();
         }catch(RegistroDuplicadoException e){
-            ErroReposta erro = ErroReposta.repostaConflito(e.getMessage());
 
+            ErroReposta erro = ErroReposta.repostaConflito(e.getMessage());
             return ResponseEntity.status(erro.status()).body(erro);
         }
     }
