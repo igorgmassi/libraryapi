@@ -1,7 +1,9 @@
 package io.com.igorgmassi.libraryapi.service;
 
+import io.com.igorgmassi.libraryapi.exeptions.OperacaoNaoPermitidaException;
 import io.com.igorgmassi.libraryapi.model.Autor;
 import io.com.igorgmassi.libraryapi.repository.AutorRepository;
+import io.com.igorgmassi.libraryapi.repository.LivroRepository;
 import io.com.igorgmassi.libraryapi.validator.AutorValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +17,10 @@ public class AutorService {
 
     @Autowired
     private AutorRepository autorRepository;
-
     @Autowired
     private AutorValidator autorValidator;
+    @Autowired
+    private LivroRepository livroRepository;
 
     public Autor salvar( Autor autor){
         autorValidator.validarAutor(autor);
@@ -29,8 +32,12 @@ public class AutorService {
     }
 
     public void deletar(Autor autor){
+        if(existeLivroPorAutor(autor)){
+            throw new OperacaoNaoPermitidaException("Não é possível deletar um Autor com livros associados.");
+        }
         autorRepository.delete(autor);
     }
+
 
     /*Now i just gonna make a sacrilege only for purpose to follow the class, but
     * i know that it is not the most clean and efficient way to implement*/
@@ -61,4 +68,9 @@ public class AutorService {
         autorValidator.validarAutor(autor);
         autorRepository.save(autor);
     }
+
+    public boolean existeLivroPorAutor(Autor autor){
+        return livroRepository.existsByAutor(autor);
+    }
+
 }
